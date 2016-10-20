@@ -1,6 +1,10 @@
 package com.ideamart.sample.ussd.receiver;
 
 import com.ideamart.sample.common.Constants;
+import com.ideamart.sample.sms.send.SendMessage;
+import com.ideamart.sample.subcription.Subscription;
+import com.ideamart.sample.usermgt.User;
+import com.ideamart.sample.usermgt.UserDAO;
 import hms.kite.samples.api.SdpException;
 import hms.kite.samples.api.StatusCodes;
 import hms.kite.samples.api.ussd.MoUssdListener;
@@ -11,17 +15,19 @@ import hms.kite.samples.api.ussd.messages.MtUssdResp;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * This class is created to receive USSD messages
  */
-public class Receiver implements MoUssdListener  {
+public class Receiver implements MoUssdListener {
 
     private UssdRequestSender ussdMtSender;
+
     @Override
     public void init() {
         try {
-            ussdMtSender = new UssdRequestSender(new URL(Constants.ReceiverConstants.USSD_URL));
+            ussdMtSender = new UssdRequestSender(new URL(Constants.ApplicationConstants.USSD_URL));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -29,19 +35,60 @@ public class Receiver implements MoUssdListener  {
 
     @Override
     public void onReceivedUssd(MoUssdReq moUssdReq) {
+        UserDAO userDAO = new UserDAO();
 
-        if (Constants.ReceiverConstants.USSD_OP_MO_INIT.equals(moUssdReq.getUssdOperation())) {
-            MtUssdReq request = createRequest(moUssdReq, "Hello World", Constants.ReceiverConstants.USSD_OP_MT_CONT );
+        if (Constants.ApplicationConstants.USSD_OP_MO_INIT.equals(moUssdReq.getUssdOperation())) {
+
             try {
+                if (!userDAO.userAvailability(moUssdReq.getSourceAddress())) {
+                    User user = new User(moUssdReq.getSourceAddress(), null, "1", moUssdReq.getMessage(), "no");
+                    userDAO.AddUser(user);
+                }
+                MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.WELCOME_MESSAGE, Constants.ApplicationConstants.USSD_OP_MT_CONT);
                 sendRequest(request);
             } catch (SdpException e) {
                 e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } else {
-            MtUssdReq request = createRequest(moUssdReq, moUssdReq.getMessage(), Constants.ReceiverConstants.USSD_OP_MT_CONT );
             try {
-                sendRequest(request);
+                String message = moUssdReq.getMessage();
+                if (message.equals("1")) {
+                    Subscription subscription = new Subscription();
+                    subscription.subscribeUser(moUssdReq.getSourceAddress());
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
+                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.REGISTER_MENU, Constants.ApplicationConstants.USSD_OP_MT_CONT);
+                    sendRequest(request);
+                    return;
+                } else if (message.equals("2")) {
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
+                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.HELP_MENU, Constants.ApplicationConstants.USSD_OP_MT_CONT);
+                    sendRequest(request);
+                    return;
+                } else if (message.equals("3")) {
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.DETAILS_MENU, Constants.ApplicationConstants.USSD_OP_MT_CONT);
+                    sendRequest(request);
+                } else if (message.equals("0")) {
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.WELCOME_MESSAGE, Constants.ApplicationConstants.USSD_OP_MT_CONT);
+                    sendRequest(request);
+                } else if (message.equals("99")) {
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.EXIT_MESSAGE, Constants.ApplicationConstants.USSD_OP_MT_FIN);
+                    sendRequest(request);
+                } else {
+                    MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.WELCOME_MESSAGE, Constants.ApplicationConstants.USSD_OP_MT_CONT);
+                    sendRequest(request);
+                }
+
             } catch (SdpException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
@@ -53,7 +100,7 @@ public class Receiver implements MoUssdListener  {
         request.setApplicationId(moUssdReq.getApplicationId());
         request.setEncoding(moUssdReq.getEncoding());
         request.setMessage(menuContent);
-        request.setPassword(Constants.ReceiverConstants.USSD_PASSWORD);
+        request.setPassword(Constants.ApplicationConstants.PASSWORD);
         request.setSessionId(moUssdReq.getSessionId());
         request.setUssdOperation(ussdOperation);
         request.setVersion(moUssdReq.getVersion());

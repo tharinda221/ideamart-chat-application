@@ -15,36 +15,88 @@
  */
 package com.ideamart.sample.sms.operations;
 
-import com.ideamart.sample.db.dbClass;
 import com.ideamart.sample.sms.send.SendMessage;
+import com.ideamart.sample.usermgt.User;
+import com.ideamart.sample.usermgt.UserDAO;
+import hms.kite.samples.api.SdpException;
 import hms.kite.samples.api.sms.messages.MoSmsReq;
-import java.util.HashMap;
+
+import java.sql.SQLException;
+
+import com.ideamart.sample.common.Constants;
 
 /**
  * This class is created for do operations for messages.
  */
 public class Operations {
 
-    private String message;
-    private HashMap<String, String> map;
-
-    public Operations(String message) {
-        this.message = message;
+    public void passToDatabase(MoSmsReq moSmsReq) throws SQLException, ClassNotFoundException, SdpException {
+        UserDAO userDAO = new UserDAO();
+        User user = new User(moSmsReq.getSourceAddress(), null, "1", moSmsReq.getMessage(), "no");
+        userDAO.AddUser(user);
+        System.out.println(userDAO.userAvailability(moSmsReq.getSourceAddress()));
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.SendMessage("Your Message Received",moSmsReq.getApplicationId(),moSmsReq.getSourceAddress()
+                , Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
     }
 
-    public void passToDatabase(MoSmsReq moSmsReq) {
-        String [] messageParts = message.split(" ");
-        if(messageParts.length == 3) {
-            map = dbClass.getDBInstance();
-            map.put(messageParts[1], messageParts[2]);
+    public void chat(String name, String message, String userAddress) throws ClassNotFoundException {
+        UserDAO userDAO = new UserDAO();
+        String userName = userDAO.getUserNameByAddress(userAddress);
+        if (userName.equals("null")) {
             SendMessage sendMessage = new SendMessage();
-            //:TODO: Password and URL should be replaced when you hosting the application
-            sendMessage.SendMessage("Your Message Saved",moSmsReq.getApplicationId(),moSmsReq.getSourceAddress()
-                    ,"password","http://127.0.0.1:7000/sms/send");
+            sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, Constants.ApplicationConstants.APP_ID,
+                    userAddress, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+            return;
+        }
+        String address = userDAO.getUserAddressByName(name);
+        SendMessage sendMessage = new SendMessage();
+        if(address == null) {
+            sendMessage.SendMessage("The name you entered was wrong. Try again", Constants.ApplicationConstants.APP_ID,
+                    userAddress, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+        } else {
+            String finalMessage = userName + ":" + message;
+            sendMessage.SendMessage(finalMessage, Constants.ApplicationConstants.APP_ID,
+                    address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+        }
+    }
+
+    public void register(String name, String address) throws ClassNotFoundException, SQLException {
+        UserDAO userDAO = new UserDAO();
+        if(!userDAO.userAvailability(address)) {
+            User user = new User(address, null, "1", "sms", "no");
+            userDAO.AddUser(user);
+        }
+        SendMessage sendMessage = new SendMessage();
+        if(userDAO.RegisterUserName(address, name)) {
+            String finalMesage = "You have successfully registered.\n Your use name is " + name;
+            sendMessage.SendMessage(finalMesage, Constants.ApplicationConstants.APP_ID,
+                    address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+        } else {
+            sendMessage.SendMessage("The name you entered is already exist. Please enter another one.", Constants.ApplicationConstants.APP_ID,
+                    address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+        }
+    }
+
+    public void find(String address) throws ClassNotFoundException {
+        UserDAO userDAO = new UserDAO();
+        String name = userDAO.getUserNameByAddress(address);
+        if(name.equals("null")) {
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, Constants.ApplicationConstants.APP_ID,
+                    address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+            return;
         } else {
             SendMessage sendMessage = new SendMessage();
-            sendMessage.SendMessage("Message format is wrong",moSmsReq.getApplicationId(),moSmsReq.getSourceAddress()
-                    ,"password","http://127.0.0.1:7000/sms/send");
+            sendMessage.SendMessage(name +":wisin echat magein chat kirimata illum kara atha.", Constants.ApplicationConstants.APP_ID,
+                    "tel:all", Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+            return;
         }
+    }
+
+    public void sendErrorMessage(String address) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.SendMessage("Oba kala yomu kireema waradiya", Constants.ApplicationConstants.APP_ID,
+                address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
     }
 }

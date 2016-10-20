@@ -1,1 +1,8 @@
 .idea
+ideamart-echat-ussd-application.iml
+target/classes/com/ideamart/sample/common/DbDriverConnection.class
+target/classes/com/ideamart/sample/database/
+target/classes/com/ideamart/sample/usermgt/
+target/generated-sources/
+target/ideamart-echat-ussd-application.war
+target/ideamart-echat-ussd-application/
