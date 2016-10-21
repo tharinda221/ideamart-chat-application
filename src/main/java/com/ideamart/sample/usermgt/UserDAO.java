@@ -16,10 +16,35 @@ public class UserDAO {
         connection = DatabaseConnection.getDBInstance().getConnection();
         stmt = connection.createStatement();
         String sql = "INSERT INTO echat VALUES (" + "\"" + user.getAddress() + "\"" + "," + "\"" + user.getMessage() + "\"" +
-                "," + "\"" + user.getFlow() + "\"" + "," + "\"" + user.getSubcription() + "\"" + ");";
+                "," + "\"" + user.getFlow() + "\"" + "," + "\"" + String.valueOf(user.getSubscription()) + "\"" + ");";
         System.out.println(sql);
         stmt.executeUpdate(sql);
 
+    }
+
+    public void updateCount(String address) throws ClassNotFoundException, SQLException {
+        connection = DatabaseConnection.getDBInstance().getConnection();
+        stmt = connection.createStatement();
+        String sql = "UPDATE echat SET subcription= subcription + 1" + " WHERE address= "+ "\"" + address + "\""+";";
+        System.out.println(sql);
+        stmt.executeUpdate(sql);
+    }
+
+    public int getCount(String address) throws ClassNotFoundException {
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select * from echat where address= " + "\"" + address + "\"" + ";";
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                return resultSet.getInt("subcription");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return 0;
     }
 
     public boolean userAvailability(String address) throws ClassNotFoundException, SQLException {
@@ -82,5 +107,43 @@ public class UserDAO {
             return "null";
         }
         return "null";
+    }
+
+    public int getTotalUsers() {
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select COUNT(*) AS total FROM echat";
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                return resultSet.getInt("total");
+            }
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getPendingUsers() {
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select COUNT(*) AS total FROM echat WHERE subcription=" + "1";
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                return resultSet.getInt("total");
+            }
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

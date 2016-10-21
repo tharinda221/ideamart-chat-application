@@ -30,18 +30,19 @@ import com.ideamart.sample.common.Constants;
  */
 public class Operations {
 
-    public void passToDatabase(MoSmsReq moSmsReq) throws SQLException, ClassNotFoundException, SdpException {
-        UserDAO userDAO = new UserDAO();
-        User user = new User(moSmsReq.getSourceAddress(), null, "1", moSmsReq.getMessage(), "no");
-        userDAO.AddUser(user);
-        System.out.println(userDAO.userAvailability(moSmsReq.getSourceAddress()));
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.SendMessage("Your Message Received",moSmsReq.getApplicationId(),moSmsReq.getSourceAddress()
-                , Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
-    }
+//    public void passToDatabase(MoSmsReq moSmsReq) throws SQLException, ClassNotFoundException, SdpException {
+//        UserDAO userDAO = new UserDAO();
+//        User user = new User(moSmsReq.getSourceAddress(), null, "1", moSmsReq.getMessage(), "no");
+//        userDAO.AddUser(user);
+//        System.out.println(userDAO.userAvailability(moSmsReq.getSourceAddress()));
+//        SendMessage sendMessage = new SendMessage();
+//        sendMessage.SendMessage("Your Message Received",moSmsReq.getApplicationId(),moSmsReq.getSourceAddress()
+//                , Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+//    }
 
-    public void chat(String name, String message, String userAddress) throws ClassNotFoundException {
+    public void chat(String name, String message, String userAddress) throws ClassNotFoundException, SQLException {
         UserDAO userDAO = new UserDAO();
+        userDAO.updateCount(userAddress);
         String userName = userDAO.getUserNameByAddress(userAddress);
         if (userName.equals("null")) {
             SendMessage sendMessage = new SendMessage();
@@ -64,7 +65,7 @@ public class Operations {
     public void register(String name, String address) throws ClassNotFoundException, SQLException {
         UserDAO userDAO = new UserDAO();
         if(!userDAO.userAvailability(address)) {
-            User user = new User(address, null, "1", "sms", "no");
+            User user = new User(address, null, "1", "sms", 1);
             userDAO.AddUser(user);
         }
         SendMessage sendMessage = new SendMessage();
@@ -78,8 +79,9 @@ public class Operations {
         }
     }
 
-    public void find(String address) throws ClassNotFoundException {
+    public void find(String address) throws ClassNotFoundException, SQLException {
         UserDAO userDAO = new UserDAO();
+        userDAO.updateCount(address);
         String name = userDAO.getUserNameByAddress(address);
         if(name.equals("null")) {
             SendMessage sendMessage = new SendMessage();

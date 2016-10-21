@@ -41,9 +41,12 @@ public class Receiver implements MoUssdListener {
 
             try {
                 if (!userDAO.userAvailability(moUssdReq.getSourceAddress())) {
-                    User user = new User(moUssdReq.getSourceAddress(), null, "1", moUssdReq.getMessage(), "no");
+                    User user = new User(moUssdReq.getSourceAddress(), null, "1", moUssdReq.getMessage(), 1);
                     userDAO.AddUser(user);
+                } else {
+                    userDAO.updateCount(moUssdReq.getSourceAddress());
                 }
+
                 MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.WELCOME_MESSAGE, Constants.ApplicationConstants.USSD_OP_MT_CONT);
                 sendRequest(request);
             } catch (SdpException e) {
