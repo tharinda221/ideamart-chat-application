@@ -1,6 +1,7 @@
 package com.ideamart.sample.ussd.receiver;
 
 import com.ideamart.sample.common.Constants;
+import com.ideamart.sample.sms.send.ScheduledMessage;
 import com.ideamart.sample.sms.send.SendMessage;
 import com.ideamart.sample.subcription.Subscription;
 import com.ideamart.sample.usermgt.User;
@@ -62,11 +63,13 @@ public class Receiver implements MoUssdListener {
                 if (message.equals("1")) {
                     Subscription subscription = new Subscription();
                     subscription.subscribeUser(moUssdReq.getSourceAddress());
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
-                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+//                    SendMessage sendMessage = new SendMessage();
+//                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
+//                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
                     MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.REGISTER_MENU, Constants.ApplicationConstants.USSD_OP_MT_CONT);
                     sendRequest(request);
+                    ScheduledMessage scheduledMessage = new ScheduledMessage();
+                    scheduledMessage.SendScheduledMessage(Constants.MessageConstants.HELP_SMS, moUssdReq, 13);
                     return;
                 } else if (message.equals("2")) {
                     SendMessage sendMessage = new SendMessage();
