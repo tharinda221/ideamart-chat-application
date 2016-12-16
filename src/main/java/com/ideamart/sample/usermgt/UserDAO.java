@@ -33,12 +33,13 @@ public class UserDAO {
     }
 
     public int getCount(String address) throws ClassNotFoundException {
+        ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
             String query = "Select * from echat where address= " + "\"" + address + "\"" + ";";
             System.out.println(query);
-            ResultSet resultSet = stmt.executeQuery(query);
+            resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 connection.close();
                 return resultSet.getInt("subcription");
@@ -46,22 +47,52 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
         return 0;
     }
 
-    public boolean userAvailability(String address) throws ClassNotFoundException, SQLException {
-        connection = DatabaseConnection.getDBInstance().getConnection();
-        stmt = connection.createStatement();
-        String query = "Select * from echat where address =" + "\"" + address + "\"" + ";";
-        System.out.println(query);
-        ResultSet resultSet = stmt.executeQuery(query);
-        connection.close();
-        if (resultSet.next()) {
-            return true;
-        } else {
-            return false;
+    public boolean userAvailability(String address) {
+        ResultSet resultSet = null;
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select * from echat where address =" + "\"" + address + "\"" + ";";
+            System.out.println(query);
+            resultSet = stmt.executeQuery(query);
+            if (resultSet.next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
+        return false;
+
     }
 
     public boolean RegisterUserName(String address, String name) throws ClassNotFoundException {
@@ -72,58 +103,85 @@ public class UserDAO {
             String sql = "INSERT INTO echat_usernames VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
             System.out.println(sql);
             stmt.executeUpdate(sql);
-            connection.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
     }
 
     public String getUserAddressByName(String name) throws ClassNotFoundException {
+        ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
             String query = "Select * from echat_usernames where name= " + "\"" + name + "\"" + ";";
             System.out.println(query);
-            ResultSet resultSet = stmt.executeQuery(query);
-            connection.close();
+            resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 return resultSet.getString("address");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
         return null;
     }
 
     public String getUserNameByAddress(String address) throws ClassNotFoundException {
+        ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
             String query = "Select * from echat_usernames where address= "+ "\"" + address + "\""  +";";
             System.out.println(query);
-            ResultSet resultSet = stmt.executeQuery(query);
-            connection.close();
+            resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 return resultSet.getString("name");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return "null";
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
         return "null";
     }
 
     public int getTotalUsers() {
+        ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
             String query = "Select COUNT(*) AS total FROM echat";
             System.out.println(query);
-            ResultSet resultSet = stmt.executeQuery(query);
-            connection.close();
+            resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 return resultSet.getInt("total");
             }
@@ -132,18 +190,29 @@ public class UserDAO {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
         return 0;
     }
 
     public int getPendingUsers() {
+        ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
             String query = "Select COUNT(*) AS total FROM echat WHERE subcription=" + "1";
             System.out.println(query);
-            ResultSet resultSet = stmt.executeQuery(query);
-            connection.close();
+            resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 return resultSet.getInt("total");
             }
@@ -152,6 +221,17 @@ public class UserDAO {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
         }
         return 0;
     }
