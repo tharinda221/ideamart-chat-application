@@ -23,6 +23,17 @@ import java.sql.SQLException;
  */
 public class Receiver implements MoUssdListener {
 
+
+    private MoUssdReq moUssdReq;
+
+    public MoUssdReq getMoUssdReq() {
+        return moUssdReq;
+    }
+
+    public void setMoUssdReq(MoUssdReq moUssdReq) {
+        this.moUssdReq = moUssdReq;
+    }
+
     private UssdRequestSender ussdMtSender;
 
     @Override
@@ -63,13 +74,25 @@ public class Receiver implements MoUssdListener {
                 if (message.equals("1")) {
                     Subscription subscription = new Subscription();
                     subscription.subscribeUser(moUssdReq.getSourceAddress());
-//                    SendMessage sendMessage = new SendMessage();
-//                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
-//                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
                     MtUssdReq request = createRequest(moUssdReq, Constants.MessageConstants.REGISTER_MENU, Constants.ApplicationConstants.USSD_OP_MT_CONT);
                     sendRequest(request);
-                    ScheduledMessage scheduledMessage = new ScheduledMessage();
-                    scheduledMessage.SendScheduledMessage(Constants.MessageConstants.HELP_SMS, moUssdReq, 13);
+                    setMoUssdReq(moUssdReq);
+                    new java.util.Timer().schedule(
+                            new java.util.TimerTask() {
+
+                                private MoUssdReq moUssdReq;
+                                @Override
+                                public void run() {
+                                    // your code here
+                                    System.out.println("Send welcome sms");
+                                    moUssdReq = getMoUssdReq();
+                                    SendMessage sendMessage = new SendMessage();
+                                    sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, moUssdReq.getApplicationId(),
+                                            moUssdReq.getSourceAddress(), Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
+                                }
+                            },
+                            15000
+                    );
                     return;
                 } else if (message.equals("2")) {
                     SendMessage sendMessage = new SendMessage();

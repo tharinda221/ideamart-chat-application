@@ -16,6 +16,7 @@
 package com.ideamart.sample.sms.receive;
 
 import com.ideamart.sample.sms.operations.Operations;
+import com.ideamart.sample.usermgt.UserDAO;
 import hms.kite.samples.api.SdpException;
 import hms.kite.samples.api.sms.MoSmsListener;
 import hms.kite.samples.api.sms.messages.MoSmsReq;
@@ -35,6 +36,7 @@ public class Receiver implements MoSmsListener {
     @Override
     public void onReceivedSms(MoSmsReq moSmsReq) {
         String message = moSmsReq.getMessage();
+        UserDAO userDAO = new UserDAO();
         String [] messageParts = message.split(" ");
         Operations operations = new Operations();
         try {
@@ -42,6 +44,7 @@ public class Receiver implements MoSmsListener {
             if(operation.equals("un")) {
                 operations.register(messageParts[2], moSmsReq.getSourceAddress());
             } else if(operation.equals("chat")) {
+                userDAO.updateCount(moSmsReq.getSourceAddress());
                 String finalString = "";
                 for (int i =3; i< messageParts.length; i++) {
                     finalString = finalString+messageParts[i]+" ";

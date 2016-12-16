@@ -19,6 +19,7 @@ public class UserDAO {
                 "," + "\"" + user.getFlow() + "\"" + "," + "\"" + String.valueOf(user.getSubscription()) + "\"" + ");";
         System.out.println(sql);
         stmt.executeUpdate(sql);
+        connection.close();
 
     }
 
@@ -28,6 +29,7 @@ public class UserDAO {
         String sql = "UPDATE echat SET subcription= subcription + 1" + " WHERE address= "+ "\"" + address + "\""+";";
         System.out.println(sql);
         stmt.executeUpdate(sql);
+        connection.close();
     }
 
     public int getCount(String address) throws ClassNotFoundException {
@@ -38,6 +40,7 @@ public class UserDAO {
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
+                connection.close();
                 return resultSet.getInt("subcription");
             }
         } catch (SQLException e) {
@@ -53,6 +56,7 @@ public class UserDAO {
         String query = "Select * from echat where address =" + "\"" + address + "\"" + ";";
         System.out.println(query);
         ResultSet resultSet = stmt.executeQuery(query);
+        connection.close();
         if (resultSet.next()) {
             return true;
         } else {
@@ -68,6 +72,7 @@ public class UserDAO {
             String sql = "INSERT INTO echat_usernames VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
             System.out.println(sql);
             stmt.executeUpdate(sql);
+            connection.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,6 +87,7 @@ public class UserDAO {
             String query = "Select * from echat_usernames where name= " + "\"" + name + "\"" + ";";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
+            connection.close();
             while (resultSet.next()) {
                 return resultSet.getString("address");
             }
@@ -99,6 +105,7 @@ public class UserDAO {
             String query = "Select * from echat_usernames where address= "+ "\"" + address + "\""  +";";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
+            connection.close();
             while (resultSet.next()) {
                 return resultSet.getString("name");
             }
@@ -116,6 +123,7 @@ public class UserDAO {
             String query = "Select COUNT(*) AS total FROM echat";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
+            connection.close();
             while (resultSet.next()) {
                 return resultSet.getInt("total");
             }
@@ -135,6 +143,7 @@ public class UserDAO {
             String query = "Select COUNT(*) AS total FROM echat WHERE subcription=" + "1";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
+            connection.close();
             while (resultSet.next()) {
                 return resultSet.getInt("total");
             }
