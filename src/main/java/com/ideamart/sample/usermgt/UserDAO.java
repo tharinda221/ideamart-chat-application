@@ -1,7 +1,9 @@
 package com.ideamart.sample.usermgt;
 
 import com.ideamart.sample.database.DatabaseConnection;
+import com.ideamart.sample.subcription.Subscription;
 
+import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -235,4 +237,50 @@ public class UserDAO {
         }
         return 0;
     }
+
+    public int[] getTotalSubscribers() {
+        ResultSet resultSet = null;
+        String address;
+        int reg = 0, unReg = 0;
+        int [] array = new int[2];
+        Subscription subscription = new Subscription();
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select address from echat;";
+            System.out.println(query);
+            resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                address = resultSet.getString("address");
+                if(subscription.getStatus(address)) {
+                    reg++;
+                } else {
+                    unReg++;
+                }
+            }
+            array[0] = reg;
+            array[1] = unReg;
+            return array;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+        }
+        return array;
+    }
+
 }
