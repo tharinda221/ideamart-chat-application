@@ -53,7 +53,7 @@ public class Receiver implements MoUssdListener {
 
             try {
                 if (!userDAO.userAvailability(moUssdReq.getSourceAddress())) {
-                    User user = new User(moUssdReq.getSourceAddress(), null, "1", moUssdReq.getMessage(), 1);
+                    User user = new User(moUssdReq.getSourceAddress(), null, "1", moUssdReq.getMessage(), 1, 0);
                     userDAO.AddUser(user);
                 } else {
                     userDAO.updateCount(moUssdReq.getSourceAddress());

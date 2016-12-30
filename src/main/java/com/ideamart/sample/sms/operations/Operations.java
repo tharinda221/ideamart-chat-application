@@ -65,7 +65,7 @@ public class Operations {
     public void register(String name, String address) throws ClassNotFoundException, SQLException {
         UserDAO userDAO = new UserDAO();
         if(!userDAO.userAvailability(address)) {
-            User user = new User(address, null, "1", "sms", 1);
+            User user = new User(address, null, "1", "sms", 1, 0);
             userDAO.AddUser(user);
         }
         SendMessage sendMessage = new SendMessage();

@@ -18,7 +18,8 @@ public class UserDAO {
         connection = DatabaseConnection.getDBInstance().getConnection();
         stmt = connection.createStatement();
         String sql = "INSERT INTO echat VALUES (" + "\"" + user.getAddress() + "\"" + "," + "\"" + user.getMessage() + "\"" +
-                "," + "\"" + user.getFlow() + "\"" + "," + "\"" + String.valueOf(user.getSubscription()) + "\"" + ");";
+                "," + "\"" + user.getFlow() + "\"" + "," + "\"" + String.valueOf(user.getSubscription()) +
+                "\"" + "," + "\"" + String.valueOf(user.getStatus()) + "\"" + ");";
         System.out.println(sql);
         stmt.executeUpdate(sql);
         connection.close();
