@@ -51,6 +51,8 @@ public final class Constants {
         public static final String DATABASE_TRAFFIC_TABLE_NAME = "eechat";
         public static final String DATABASE_USER_TABLE_NAME = "eechat_usernames";
 
+        public static final String DATABASE_DASHBOARD_TABLE_NAME = "eechat_dashboard";
+
 
     }
 

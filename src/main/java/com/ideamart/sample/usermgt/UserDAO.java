@@ -34,7 +34,7 @@ public class UserDAO {
     public void updateCount(String address) throws ClassNotFoundException, SQLException {
         connection = DatabaseConnection.getDBInstance().getConnection();
         stmt = connection.createStatement();
-        String sql = "UPDATE "+ tableName +" SET subcription= subcription + 1" + " WHERE address= " + "\"" + address + "\"" + ";";
+        String sql = "UPDATE " + tableName + " SET subcription= subcription + 1" + " WHERE address= " + "\"" + address + "\"" + ";";
         System.out.println(sql);
         stmt.executeUpdate(sql);
         connection.close();
@@ -45,7 +45,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from "+ tableName +" where address= " + "\"" + address + "\"" + ";";
+            String query = "Select * from " + tableName + " where address= " + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -75,7 +75,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from "+ tableName +" where address =" + "\"" + address + "\"" + ";";
+            String query = "Select * from " + tableName + " where address =" + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             if (resultSet.next()) {
@@ -108,7 +108,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String sql = "INSERT INTO "+ tableUserName +" VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
+            String sql = "INSERT INTO " + tableUserName + " VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
             System.out.println(sql);
             stmt.executeUpdate(sql);
             return true;
@@ -129,7 +129,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from "+ tableUserName +" where name= " + "\"" + name + "\"" + ";";
+            String query = "Select * from " + tableUserName + " where name= " + "\"" + name + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -158,7 +158,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from "+ tableUserName +" where address= " + "\"" + address + "\"" + ";";
+            String query = "Select * from " + tableUserName + " where address= " + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -182,12 +182,50 @@ public class UserDAO {
         return "null";
     }
 
+    public void updateUserStatus(String address, int status) throws ClassNotFoundException, SQLException {
+        connection = DatabaseConnection.getDBInstance().getConnection();
+        stmt = connection.createStatement();
+        String sql = "UPDATE " + tableName + " SET status = " + status + "" + " WHERE address= " + "\"" + address + "\"" + ";";
+        System.out.println(sql);
+        stmt.executeUpdate(sql);
+        connection.close();
+    }
+
+    public int getUserStatus(String address) throws ClassNotFoundException {
+        ResultSet resultSet = null;
+        try {
+            connection = DatabaseConnection.getDBInstance().getConnection();
+            stmt = connection.createStatement();
+            String query = "Select * from " + tableName + " where address= " + "\"" + address + "\"" + ";";
+            System.out.println(query);
+            resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                return resultSet.getInt("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+        }
+        return 0;
+    }
+
     public int getTotalUsers() {
         ResultSet resultSet = null;
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select COUNT(*) AS total FROM "+ tableName +"";
+            String query = "Select COUNT(*) AS total FROM " + tableName + "";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -218,7 +256,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select COUNT(*) AS total FROM "+ tableName +" WHERE subcription=" + "1";
+            String query = "Select COUNT(*) AS total FROM " + tableName + " WHERE subcription=" + "1";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -247,30 +285,31 @@ public class UserDAO {
     public int[] getTotalSubscribers() {
         ResultSet resultSet = null;
         String address;
-        int reg = 0, unReg = 0;
-        int[] array = new int[2];
+        int reg = 0, unReg = 0, pending = 0;
+        int[] array = new int[3];
         Subscription subscription = new Subscription();
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
-            connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select address from "+ tableName +";";
+            String query = "Select address from " + tableName + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 address = resultSet.getString("address");
-                if (subscription.getStatus(address)) {
+                if (getUserStatus(address) == 1) {
                     reg++;
-                } else {
+
+                } else if (getUserStatus(address) == 0) {
                     unReg++;
+                } else {
+                    pending++;
                 }
             }
             array[0] = reg;
             array[1] = unReg;
+            array[2] = pending;
             return array;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
