@@ -1,5 +1,6 @@
 package com.ideamart.sample.usermgt;
 
+import com.ideamart.sample.common.Constants;
 import com.ideamart.sample.database.DatabaseConnection;
 import com.ideamart.sample.subcription.Subscription;
 
@@ -9,7 +10,11 @@ import java.sql.*;
 /**
  * Created by tharinda on 10/20/16.
  */
+
 public class UserDAO {
+
+    private String tableName = Constants.ApplicationConstants.DATABASE_TRAFFIC_TABLE_NAME;
+    private String tableUserName = Constants.ApplicationConstants.DATABASE_USER_TABLE_NAME;
 
     private Connection connection;
     private Statement stmt;
@@ -17,7 +22,7 @@ public class UserDAO {
     public void AddUser(User user) throws ClassNotFoundException, SQLException {
         connection = DatabaseConnection.getDBInstance().getConnection();
         stmt = connection.createStatement();
-        String sql = "INSERT INTO echat VALUES (" + "\"" + user.getAddress() + "\"" + "," + "\"" + user.getMessage() + "\"" +
+        String sql = "INSERT INTO " + tableName + " VALUES (" + "\"" + user.getAddress() + "\"" + "," + "\"" + user.getMessage() + "\"" +
                 "," + "\"" + user.getFlow() + "\"" + "," + "\"" + String.valueOf(user.getSubscription()) +
                 "\"" + "," + "\"" + String.valueOf(user.getStatus()) + "\"" + ");";
         System.out.println(sql);
@@ -29,7 +34,7 @@ public class UserDAO {
     public void updateCount(String address) throws ClassNotFoundException, SQLException {
         connection = DatabaseConnection.getDBInstance().getConnection();
         stmt = connection.createStatement();
-        String sql = "UPDATE echat SET subcription= subcription + 1" + " WHERE address= "+ "\"" + address + "\""+";";
+        String sql = "UPDATE "+ tableName +" SET subcription= subcription + 1" + " WHERE address= " + "\"" + address + "\"" + ";";
         System.out.println(sql);
         stmt.executeUpdate(sql);
         connection.close();
@@ -40,7 +45,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from echat where address= " + "\"" + address + "\"" + ";";
+            String query = "Select * from "+ tableName +" where address= " + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -70,7 +75,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from echat where address =" + "\"" + address + "\"" + ";";
+            String query = "Select * from "+ tableName +" where address =" + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             if (resultSet.next()) {
@@ -103,7 +108,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String sql = "INSERT INTO echat_usernames VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
+            String sql = "INSERT INTO "+ tableUserName +" VALUES (" + "\"" + address + "\"" + "," + "\"" + name + "\"" + ");";
             System.out.println(sql);
             stmt.executeUpdate(sql);
             return true;
@@ -124,7 +129,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from echat_usernames where name= " + "\"" + name + "\"" + ";";
+            String query = "Select * from "+ tableUserName +" where name= " + "\"" + name + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -153,7 +158,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select * from echat_usernames where address= "+ "\"" + address + "\""  +";";
+            String query = "Select * from "+ tableUserName +" where address= " + "\"" + address + "\"" + ";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -182,7 +187,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select COUNT(*) AS total FROM echat";
+            String query = "Select COUNT(*) AS total FROM "+ tableName +"";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -213,7 +218,7 @@ public class UserDAO {
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select COUNT(*) AS total FROM echat WHERE subcription=" + "1";
+            String query = "Select COUNT(*) AS total FROM "+ tableName +" WHERE subcription=" + "1";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
@@ -243,18 +248,18 @@ public class UserDAO {
         ResultSet resultSet = null;
         String address;
         int reg = 0, unReg = 0;
-        int [] array = new int[2];
+        int[] array = new int[2];
         Subscription subscription = new Subscription();
         try {
             connection = DatabaseConnection.getDBInstance().getConnection();
             connection = DatabaseConnection.getDBInstance().getConnection();
             stmt = connection.createStatement();
-            String query = "Select address from echat;";
+            String query = "Select address from "+ tableName +";";
             System.out.println(query);
             resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 address = resultSet.getString("address");
-                if(subscription.getStatus(address)) {
+                if (subscription.getStatus(address)) {
                     reg++;
                 } else {
                     unReg++;

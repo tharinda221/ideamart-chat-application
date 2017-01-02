@@ -35,8 +35,8 @@ public final class Constants {
 //        public static final String APP_ID = "APP_00001";
 
         //hosted app credentials
-        public static final String PASSWORD = "e522538aa92eab577858a173f4137693";
-        public static final String APP_ID = "APP_031716";
+        public static final String PASSWORD = "16664c10bf198ee7b75a16bf08a0c117";
+        public static final String APP_ID = "APP_032174";
 
         //local database
 //        public static final String JDBC_URL = "jdbc:mysql://localhost:3306/Pradeep";
@@ -47,6 +47,9 @@ public final class Constants {
         public static final String JDBC_URL = "jdbc:mysql://localhost:3306/gknow";
         public static final String DATABASE_USERNAME = "lahirur";
         public static final String DATABASE_PASSWORD = "1@H!7uR";
+
+        public static final String DATABASE_TRAFFIC_TABLE_NAME = "eechat";
+        public static final String DATABASE_USER_TABLE_NAME = "eechat_usernames";
 
 
     }

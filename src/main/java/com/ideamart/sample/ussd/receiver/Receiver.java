@@ -150,6 +150,7 @@ public class Receiver implements MoUssdListener {
         // response status
         String statusCode = response.getStatusCode();
         String statusDetails = response.getStatusDetail();
+        //System.out.println(statusDetails);
         if (StatusCodes.SuccessK.equals(statusCode)) {
             System.out.println("Message sent succeeded");
         } else {
