@@ -3,8 +3,10 @@ package com.ideamart.sample.restservices;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ideamart.sample.common.Constants;
 import com.ideamart.sample.dashboardMgt.Dashboard;
 import com.ideamart.sample.dashboardMgt.DashboardDAO;
+import com.ideamart.sample.sms.send.SendMessage;
 import com.ideamart.sample.usermgt.UserDAO;
 
 import javax.servlet.ServletException;
@@ -66,6 +68,9 @@ public class Notification extends HttpServlet {
     public void DashboardTrafficUpdate(String address, String status) throws SQLException, ClassNotFoundException {
         UserDAO userDAO = new UserDAO();
         if(status.equals("REGISTERED")) {
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.SendMessage(Constants.MessageConstants.HELP_SMS, Constants.ApplicationConstants.APP_ID,
+                    address, Constants.ApplicationConstants.PASSWORD, Constants.ApplicationConstants.SMS_URL);
             userDAO.updateUserStatus(address, 1);
         } else if(status.equals("UNREGISTERED")) {
             userDAO.updateUserStatus(address, 0);

@@ -60,32 +60,32 @@ public final class Constants {
         public static final String WELCOME_MESSAGE = "1. Register\n2. Help\n99.Exit";
         public static final String REGISTER_MENU = "Thanks for registration.\n" +
                 "sms magin details labenu atha.\n0. Back\n99. Exit";
-        public static final String WELCOME_SMS = "welcome to chatee ussd application.\n" +
+        public static final String WELCOME_SMS = "welcome to eechat ussd application.\n" +
                 "            obata awashya thorathuru pahatha dakwei.\n" +
                 " \n" +
                 "            1.Usename ekak thoraganimata:-\n" +
-                "            chatee <Space> UN <Space> Your name \n" +
+                "            eechat <Space> UN <Space> Your name \n" +
                 "            Sent To 77100.\n" +
                 "\n" +
-                "            2.Chat Kirimata:-chatee <Space> chat <Space> Friends Username <Space> Your message \n" +
+                "            2.Chat Kirimata:-eechat <Space> chat <Space> Friends Username <Space> Your message \n" +
                 "            sent to 77100\n" +
-                "              Ex:- \"chatee chat udaya hello mchn khomada.. -- sent to 77100\n";
+                "              Ex:- \"eechat chat udaya hello mchn khomada.. -- sent to 77100\n";
         public static final String HELP_MENU = "sms ekak magin awashya Thorathuru labenu atha.\n" +
                 "0. Back\n" +
                 "99. Exit";
-        public static final String HELP_SMS = "welcome to chatee ussd application.\n" +
+        public static final String HELP_SMS = "welcome to eechat ussd application.\n" +
                 "            obata awashya thorathuru pahatha dakwei.\n" +
                 " \n" +
                 "            1.Usename ekak thoraganimata:-\n" +
-                "            chatee <Space> UN <Space> Your name \n" +
+                "            eechat <Space> UN <Space> Your name \n" +
                 "            Sent To 77100.\n" +
                 "\n" +
-                "            2.Chat Kirimata:-chatee <Space> chat <Space> Friends Username <Space> Your message \n" +
+                "            2.Chat Kirimata:-eechat <Space> chat <Space> Friends Username <Space> Your message \n" +
                 "            sent to 77100\n" +
-                "              Ex:- \"chatee chat udaya hello mchn khomada.. -- sent to 77100\n";
+                "              Ex:- \"eechat chat udaya hello mchn khomada.. -- sent to 77100\n";
         public static final String DETAILS_MENU = "Developer: tharinda221@gmail.com\n" +
                 "0. Back\n99. Exit";
-        public static final String EXIT_MESSAGE = "Thank you for used chatee. Come again";
+        public static final String EXIT_MESSAGE = "Thank you for used eechat. Come again";
 
     }
 }
